@@ -1,0 +1,10 @@
+iphone:
+
+http://baidu.app111.com/index?menu=index&tab=history&currentPage=1
+http://baidu.app111.com/index?menu=index&tab=game&currentPage=1
+http://baidu.app111.com/index?menu=index&tab=bibei&currentPage=1
+
+anzuo:
+http://mobile.baidu.com/app?action=index&type=home&from=0&pn=0
+http://mobile.baidu.com/app?action=list&type=recsoft&from=0&pn=0
+http://mobile.baidu.com/app?action=list&type=recgame&from=0&pn=0

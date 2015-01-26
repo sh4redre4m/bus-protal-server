@@ -1,0 +1,399 @@
+{#extends file='master/master.html'#}
+{#block name=title#}wifi manage,account{#/block#}
+{#block name=head#}
+    <style type="text/css">
+    .container-fluid{
+      min-width: 700px;
+    }
+    .panel-body{
+        padding: 0px;
+    }
+    .panel-body .table{
+       margin-bottom: 0px;
+    }
+    </style>
+{#/block#}
+{#block name=centent#}
+<div class="container-fluid">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+          apps 常规信息
+          <div class="panel-btn">
+                  <label class="panel-hid">收起</label>
+                  <label class="panel-show">展开</label>
+          </div>
+      </div>
+      <div  class="panel-body">
+            <table class="table table-striped table-hover table-responsive">
+                <thead>
+                  <tr>
+                          <th><input type="checkbox" id="allcheckbox"></th>
+                          <th>名称</th>
+                          <th>pack_name</th>
+                          <th>装机量</th>
+                          <th>最大online数</th>
+                          <th>db_ltime</th>
+                          <th>ltime</th>
+                          <th>当前在线</th>
+                          <th>异常总数</th>
+                          <th>当前异常数</th>
+                          <th>总时长</th>
+                          <th>总流量</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {#foreach item=list from=$tokenlist#}
+                    <tr>
+                          <td><input type="checkbox" value="{#$list.id#}"></td>
+                          <td>{#$list.name#}</td>
+                          <td>{#$list.pack_name#}</td>
+                          <td>{#$list.user_quantity#}</td>
+                          <td>{#$list.concurrent_quantity#}</td>
+                          <td>{#$list.ltime#}</td>
+                          <td>{#$list.tokendata.ltime#}</td>
+                          <td>{#$list.tokendata.current#}</td>
+                          <td>{#$list.tokendata.aberrant_total#}</td>
+                          <td>{#$list.tokendata.aberrant_current#}</td>
+                          <td>{#$list.tokendata.time#}</td>
+                          <td>{#$list.tokendata.flow#}</td>
+                    </tr>  
+                    {#/foreach#}
+                </tbody>
+            </table>
+             <div class="pull-right"  style="padding:20px;">选中项:<button type="button" class="btn btn-primary btn-xs" id="changebtn">修改</button>   <button type="button" class="btn btn-danger btn-xs"  id="deletebtn">删除</button> | <a href="javascript:void(0)" id="insertbtn">插入一条新记录</a></div>
+      </div>
+    </div>
+    
+<div class="panel panel-default">
+      <div class="panel-heading">
+          apps日志信息<br/>
+          只显示前十天
+          <div class="panel-btn">
+                  <label class="panel-hid">收起</label>
+                  <label class="panel-show">展开</label>
+          </div>
+      </div>
+      <div  class="panel-body">
+            <table class="table table-striped table-hover table-responsive">
+                <thead>
+                  <tr>
+                          <th>名称</th>
+                          <th>总数</th>
+                          <th>最大在线</th>
+                          <th>总时长</th>
+                          <th>总流量</th>
+                          <th>日期</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {#foreach item=list from=$customer_statisticslist#}
+                    <tr>
+                          <td>{#$list.name#}</td>
+                          <td>{#$list.total#}</td>
+                          <td>{#$list.max#}</td>
+                          <td>{#$list.time#}</td>
+                          <td>{#$list.flow#}</td>
+                          <td>{#$list.date#}</td>
+                    </tr>
+                    {#/foreach#}
+                </tbody>
+            </table>
+      </div>
+    </div>
+</div>
+{#/block#}
+{#block name=bottomjs#}
+<script type="text/javascript">
+var page = {
+     'change_checked':null
+}
+$('.panel-hid').click(function(e){
+      $(this).parent().find('.panel-show').show();
+      $(this).hide();
+      $(this).parent().parent().parent().find('.panel-body').stop().hide(500);
+})
+$('.panel-show').click(function(e){
+      $(this).parent().find('.panel-hid').show();
+      $(this).hide();
+      $(this).parent().parent().parent().find('.panel-body').stop().show(500);
+})
+$("#allcheckbox").click(function(e){
+       if($(this).get(0).checked){
+              $(this).parent().parent().parent().parent().parent().find('table input').each(function(){
+                   $(this).get(0).checked = true;
+              })
+       }else{
+              $(this).parent().parent().parent().parent().parent().find('table input').each(function(){
+                   $(this).get(0).checked = false;
+              })
+       }
+})
+function getChecked(){
+      var checkedlist = [];
+      $('.panel-body:eq(0) tbody input').each(function(index){
+              if($(this).get(0).checked){
+                    checkedlist.push({'index':index,'id':$(this).get(0).value});
+              }
+      })
+      return checkedlist;
+}
+$("#changebtn").click(function(){
+      var checkedlist = getChecked();
+      if(checkedlist.length!=1){
+            alert('必须选择且只能选择一个记录');
+            return false;
+      }
+      if($('#change_pop').length==0){
+             var changePop = '<div class="modal fade" id="change_pop" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">'
+                                          + '<div class="modal-dialog">'
+                                              + '<div class="modal-content">'
+                                                 + ' <div class="modal-header">'
+                                                        + ' <h4 class="modal-title">修改app信息</h4>'
+                                                 + '  </div>'
+                                                  + '  <div class="modal-body" style="font-size: 18px;line-height: 36px;">'
++ '<form class="form-horizontal" role="form">'
++ '<div class="form-group">'
++ '<label class="col-sm-4 control-label">包名</label>'
++ '<div class="col-sm-8">'
++ '<input type="text" class="form-control" id="change_pop_pack_name" placeholder="报名不能为空" disabled>'
++ '</div>'
++ '</div>'
++ '<div class="form-group">'
++ '<label class="col-sm-4 control-label">装机量</label>'
++ '<div class="col-sm-8">'
++ '<input type="text" class="form-control" id="change_pop_user_quantity" placeholder="请填入整数">'
++ '</div>'
++ '</div>'
++ '<div class="form-group">'
++ '<label class="col-sm-4 control-label">最大online数</label>'
++ '<div class="col-sm-8">'
++ '<input type="text" class="form-control"  id="change_pop_concurrent_quantity" placeholder="请填入整数">'
++ '</div>'
++ '</div>'
++ '<div class="form-group">'
++ '<label class="col-sm-4 control-label">db_ltime</label>'
++ '<div class="col-sm-8">'
++ '<input type="text" class="form-control"  id="change_pop_db_ltime" placeholder="请填入整数">'
++ '</div>'
++ '</div>'
++ '<div class="form-group">'
++ '<label class="col-sm-4 control-label">ltime</label>'
++ '<div class="col-sm-8">'
++ '<input type="text" class="form-control"  id="change_pop_ltime" placeholder="请填入整数">'
++ '</div>'
++ '</div>'
++ '<div class="form-group">'
++ '<div class="col-sm-offset-4 col-sm-8">'
++ '<button type="button" class="btn btn-default" id="change_pop_btn">执行</button>'
++ '</div>'
++ '</div>'
++ '</form>'
+                                                   + ' </div>'
+                                              + '</div>'
+                                          + '</div>'
+                                      + '</div>';
+             $('body').append(changePop);
+             $('#change_pop_btn').click(function(e){
+                    if(!/^[0-9]+$/.test($('#change_pop_user_quantity').val())){
+                          alert('装机量必须是数字');
+                          return false;
+                    }
+                   if(!/^[0-9]+$/.test($('#change_pop_concurrent_quantity').val())){
+                          alert('最大online数必须是数字');
+                          return false;
+                    }
+                    if(!/^[0-9]+$/.test($('#change_pop_db_ltime').val())){
+                          alert('db_ltime必须是数字');
+                          return false;
+                    }
+                    if(!/^[0-9]+$/.test($('#change_pop_ltime').val())){
+                          alert('ltime必须是数字');
+                          return false;
+                    }
+                    var ajaxurl = '/ajaxadmin/changeapp?id='+checkedlist[0].id;
+                    $.post(ajaxurl,{
+                         'user_quantity':$('#change_pop_user_quantity').val(),
+                         'concurrent_quantity':$('#change_pop_concurrent_quantity').val(),
+                         'db_ltime':$('#change_pop_db_ltime').val(),
+                         'ltime':$('#change_pop_ltime').val(),
+                    },function(json){
+                          if(json.error==0){
+                                alert('登陆信息已失效');
+                                window.location.href = window.location.href;
+                          }else{
+                                if(json.result == 0){
+                                      alert('修改成功');
+                                      window.location.href = window.location.href;
+                                }else{
+                                      alert('修改异常');                        
+                                }
+                          }
+                    })
+
+             })
+      }
+      if(page.changebtn!=checkedlist[0]['id']){
+            $('.panel-body:eq(0) tbody tr:eq('+checkedlist[0]['index']+')').find('td').each(function(index){
+                   switch(index){
+                        case 2:
+                            $('#change_pop_pack_name').val($(this).text());
+                            break;
+                        case 3:
+                            $('#change_pop_user_quantity').val($(this).text());
+                            break;
+                        case 4:
+                            $('#change_pop_concurrent_quantity').val($(this).text());
+                            break;
+                        case 5:
+                            $('#change_pop_db_ltime').val($(this).text());
+                            break;
+                        case 6:
+                            $('#change_pop_ltime').val($(this).text());
+                            break;
+                   }
+            })
+      }
+      page.changebtn = checkedlist[0]['id'];
+      $("#change_pop").modal();
+})
+$("#deletebtn").click(function(){
+       var checkedlist = getChecked();
+       if(checkedlist.length<1){
+             alert('至少选择一个记录');
+             return false;
+       }
+      if(confirm('删除后无法恢复该记录并且该app无法继续正常使用,您确定要删除选中项')){
+                var ids = '';
+                for(var i in checkedlist){
+                      if(ids!='') ids += ',';
+                      ids +=checkedlist[i].id;
+                }
+                var ajaxurl = '/ajaxadmin/delapp?ids='+ids;
+                $.get(ajaxurl,function(json){
+                      if(json.error==0){
+                            alert('登陆信息已失效');
+                            window.location.href = window.location.href;
+                      }else{
+                            if(json.result == 0){
+                                  alert('删除成功');
+                                  window.location.href = window.location.href;
+                            }else{
+                                  alert('删除异常');                        
+                            }
+                      }
+                })
+       }else{
+             return false;
+       }
+})
+$("#insertbtn").click(function(){
+       if($('#insert_pop').length==0){
+             var insertPop = '<div class="modal fade" id="insert_pop" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">'
+                                          + '<div class="modal-dialog">'
+                                              + '<div class="modal-content">'
+                                                 + ' <div class="modal-header">'
+                                                        + ' <h4 class="modal-title">插入新的app</h4>'
+                                                 + '  </div>'
+                                                  + '  <div class="modal-body" style="font-size: 18px;line-height: 36px;">'
++ '<form class="form-horizontal" role="form">'
++ '<div class="form-group">'
++ '<label class="col-sm-4 control-label">APP名</label>'
++ '<div class="col-sm-8">'
++ '<input type="text" class="form-control" id="insert_pop_name" placeholder="app名不能为空">'
++ '</div>'
++ '</div>'
++ '<div class="form-group">'
++ '<label class="col-sm-4 control-label">包名</label>'
++ '<div class="col-sm-8">'
++ '<input type="text" class="form-control" id="insert_pop_pack_name" placeholder="包名不能为空">'
++ '</div>'
++ '</div>'
++ '<div class="form-group">'
++ '<label class="col-sm-4 control-label">token</label>'
++ '<div class="col-sm-8">'
++ '<input type="text" class="form-control" id="insert_pop_token" placeholder="token不能为空">'
++ '</div>'
++ '</div>'
++ '<div class="form-group">'
++ '<label class="col-sm-4 control-label">装机量</label>'
++ '<div class="col-sm-8">'
++ '<input type="text" class="form-control" id="insert_pop_user_quantity" placeholder="请填入整数">'
++ '</div>'
++ '</div>'
++ '<div class="form-group">'
++ '<label class="col-sm-4 control-label">最大online数</label>'
++ '<div class="col-sm-8">'
++ '<input type="text" class="form-control"  id="insert_pop_concurrent_quantity" placeholder="请填入整数">'
++ '</div>'
++ '</div>'
++ '<div class="form-group">'
++ '<label class="col-sm-4 control-label">ltime</label>'
++ '<div class="col-sm-8">'
++ '<input type="text" class="form-control"  id="insert_pop_ltime" placeholder="请填入整数">'
++ '</div>'
++ '</div>'
++ '<div class="form-group">'
++ '<div class="col-sm-offset-4 col-sm-8">'
++ '<button type="button" class="btn btn-default" id="insert_pop_btn">执行</button>'
++ '</div>'
++ '</div>'
++ '</form>'
+                                                   + ' </div>'
+                                              + '</div>'
+                                          + '</div>'
+                                      + '</div>';
+             $('body').append(insertPop);
+             $('#insert_pop_btn').click(function(e){
+                   if($('#insert_pop_name').val() ==''){
+                         alert('APP名不能为空');
+                         return false;
+                   }
+                   if($('#insert_pop_pack_name').val() ==''){
+                         alert('包名不能为空');
+                         return false;
+                   }
+                   if($('#insert_pop_token').val()==''){
+                          alert('token 不能为空');
+                          return false;
+                   }
+                  if(!/^[0-9]+$/.test($('#insert_pop_user_quantity').val())){
+                          alert('装机量必须是数字');
+                          return false;
+                    }
+                   if(!/^[0-9]+$/.test($('#insert_pop_concurrent_quantity').val())){
+                          alert('最大online数必须是数字');
+                          return false;
+                    }
+                    if(!/^[0-9]+$/.test($('#insert_pop_ltime').val())){
+                          alert('ltime必须是数字');
+                          return false;
+                    }
+                    
+                    var ajaxurl = '/ajaxadmin/addapp'
+                    $.post(ajaxurl,{
+                         'name':$('#insert_pop_name').val(),
+                         'pack_name':$('#insert_pop_pack_name').val(),
+                         'token':$('#insert_pop_token').val(),
+                         'user_quantity':$('#insert_pop_user_quantity').val(),
+                         'concurrent_quantity':$('#insert_pop_concurrent_quantity').val(),
+                         'ltime':$('#insert_pop_ltime').val(),
+                    },function(json){
+                          if(json.error==0){
+                                alert('登陆信息已失效');
+                                window.location.href = window.location.href;
+                          }else{
+                                if(json.result == 0){
+                                      alert('插入成功');
+                                      window.location.href = window.location.href;
+                                }else{
+                                      alert('插入异常');                        
+                                }
+                          }
+                    })
+
+             })
+      }
+      $("#insert_pop").modal();
+})
+</script>
+{#/block#}

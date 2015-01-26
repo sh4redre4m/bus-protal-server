@@ -1,0 +1,124 @@
+{#extends file='master/master.html'#}
+{#block name=title#}wifi manage,account{#/block#}
+{#block name=head#}
+{#/block#}
+{#block name=centent#}
+<div class="container-fluid">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+          批量导入
+          <div class="panel-btn">
+                  <label class="panel-hid">收起</label>
+                  <label class="panel-show">展开</label>
+          </div>
+      </div>
+      <ol>
+          <li>先把文件上传到服务器
+          <pre>
+          文件格式:
+          帐号1      密码1
+          帐号2      密码2  
+          帐号3      密码3
+          帐号和密码是tab来分开,帐号和帐号之间是换行符.若是格式不同请修改脚本再导入
+        </pre>
+          </li>
+          <li>利用dumpaccount.php 这个脚本直接用cgi 的方式运行</li>
+           <pre>
+          参数:
+                1: 导入文本的路径
+                2: 导入的帐号类型,eg: guide,general
+                3: 导入账户的时常
+                4: 导入账户的流量
+                5: 热点名称,cmcc:1,chinanet:2
+                6: 导入帐号的品牌, 动感地带:1,全球通:2,神州行:3,乐享:4,飞young:5
+                7: 月结日(整数): 1~31
+                8:当前资费每月要付的话费,eg:30
+                9:当前帐号余额,eg:30
+                10:当前帐号的归属地, 请对照以下的文档查找相应的归属地.  如,移动广东广州, 请输入广州,  移动北京,请输入 北京
+
+                eg: php importaccount.php /var/account.txt guide 500 20000 1 1 31 30 32 广州
+           
+归属地对照表:
+中国移动:
+{#include file='common/m.txt'#}
+
+
+
+
+
+中国电信:
+{#include file='common/189.txt'#}
+           </pre>
+          <li>如果中途出错,可以把备份的表还原,再尝试一遍,如果成功了就请删除备份表</li>
+      </ol>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+            批量导出需要充值帐号
+            <div class="panel-btn">
+                    <label class="panel-hid">收起</label>
+                    <label class="panel-show">展开</label>
+            </div>
+      </div>
+      <ol>
+            <li>导出文本
+           <pre>
+          文本的格式:
+          帐号1      30      (充值数额)
+          帐号2      30
+           </pre>
+            </li>
+          <li>充值数额 = 每月需付话费-帐号余额+1</li>
+          <li>会导出4个文本
+            <pre>
+          cmcc_guide.txt:中国移动引导帐号
+          chinanet_guide.txt:中国移动常规帐号
+          cmcc_general.txt:中国电信引导帐号
+          chinanet_general.txt:中国电信常规帐号
+            </pre>
+          </li>
+          <li>eg:  php dumpaccount.php /var/
+            <pre>
+            参数:1 要导出的文件夹
+            </pre>
+          </li>
+      </ol>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+            批量更新帐号余额
+          <div class="panel-btn">
+                  <label class="panel-hid">收起</label>
+                  <label class="panel-show">展开</label>
+          </div>
+      </div>
+      <ol>
+            <li>导入文本
+           <pre>
+          文本的格式:
+          帐号1      30      (新的话费余额)
+          帐号2      30
+           </pre>
+            </li>
+          <li>php updateaccount.php /var/account.txt all
+            <pre>
+            参数:1 要导入的文本
+            参数:2 要更新的帐号类型,guide:只更新引导帐号,general:只更新常规帐号,all:都更新
+            </pre>
+          </li>
+      </ol>
+    </div>
+</div>
+<script type="text/javascript">
+$('.panel-hid').click(function(e){
+      $(this).parent().find('.panel-show').show();
+      $(this).hide();
+       $(this).parent().parent().parent().find('ol').stop().hide(500);
+})
+$('.panel-show').click(function(e){
+      $(this).parent().find('.panel-hid').show();
+      $(this).hide();
+       $(this).parent().parent().parent().find('ol').stop().show(500);
+})
+</script>
+{#/block#}

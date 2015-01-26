@@ -1,0 +1,73 @@
+body { padding-bottom: 70px; }
+/*****/
+.panel-btn{
+	float: right;
+}
+.panel-btn .panel-show,.panel-btn .panel-hid{
+	font-size: 12px;
+	color: #666;
+	cursor: pointer;
+}
+.panel-show{
+	display: none;
+}
+/****/
+.navbar{
+	border-radius: 0px;
+}
+.user_logout{
+	background: #232323;
+	float: left;
+	padding-left: 0px;
+	width:0px;
+	height: 44px;
+	opacity: 0.3;
+	overflow: hidden;
+	transition-duration: 0.5s;
+	-moz-transition-duration: 0.5s; /* Firefox 4 */
+	-webkit-transition-duration: 0.5s; /* Safari 和 Chrome */
+	-o-transition-duration: 0.5s; /* Opera */
+}
+.user_info:hover .user_logout{
+	width:160px;
+	opacity: 1;
+}
+.user_div{
+	background: #111;
+	border-radius: 0;
+	color: #fff;
+	font-size: 26px;
+	opacity: 0.3;
+	overflow: hidden;
+	width: 38px;
+	padding-left: 6px;
+	padding-top: 6px;
+	float: left;
+	display: block;
+	padding-left: 6px;
+	padding-top: 6px;
+	transition-duration: 0.5s;
+	-moz-transition-duration: 0.5s; /* Firefox 4 */
+	-webkit-transition-duration: 0.5s; /* Safari 和 Chrome */
+	-o-transition-duration: 0.5s; /* Opera */
+}
+.user_info .user_logout label,.user_info .user_logout a{
+	font-size: 14px;
+	color: #fff;
+	line-height: 58px;
+	font-weight: normal;
+}
+.user_info .user_logout label{
+	padding-left: 16px;
+}
+.user_info .user_logout a{
+	margin-left: 10px;
+}
+.user_info:hover .user_div{
+	opacity: 1;
+}
+.form-horizontal .control-label{
+	padding-top: 0px;
+	font-weight: normal;
+	font-size: 16px;
+}
