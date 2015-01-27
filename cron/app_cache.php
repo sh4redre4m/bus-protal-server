@@ -4,7 +4,6 @@
 	require(APP_PATH.DS.'lib'.DS.'lib.php');
 	think::cron();
 
-	$PingYing = new pinyin();
 	// ios recommend
 	$data_recommend = file_get_contents("http://baidu.app111.com/index?menu=index&tab=history&currentPage=1");
 	
@@ -16,7 +15,7 @@
 		foreach ($AppList as $l) {
 			$d = array();
 			$d['name'] = $l['AppName'];
-			$d['pinyin'] = $PingYing->getAllPY($l['AppName']);
+			$d['pinyin'] = pinyin::utf8_to($l['AppName']);
 			$d['logo_orignurl'] = $l['AppLogo'];
 			$d['summary'] = $l['BriefSummary'];
 			$d['AppSource'] = $l['AppSource'];
@@ -35,7 +34,7 @@
 		foreach ($AppList as $l) {
 			$d = array();
 			$d['name'] = $l['AppName'];
-			$d['pinyin'] = $PingYing->getAllPY($l['AppName']);
+			$d['pinyin'] = pinyin::utf8_to($l['AppName']);
 			$d['logo_orignurl'] = $l['AppLogo'];
 			$d['summary'] = $l['BriefSummary'];
 			$d['AppSource'] = $l['AppSource'];
@@ -54,7 +53,7 @@
 		foreach ($AppList as $l) {
 			$d = array();
 			$d['name'] = $l['AppName'];
-			$d['pinyin'] = $PingYing->getAllPY($l['AppName']);
+			$d['pinyin'] = pinyin::utf8_to($l['AppName']);
 			$d['logo_orignurl'] = $l['AppLogo'];
 			$d['summary'] = $l['BriefSummary'];
 			$d['AppSource'] = $l['AppSource'];
@@ -74,7 +73,7 @@
 		foreach ($AppList as $l) {
 			$d = array();
 			$d['name'] = $l['sname'];
-			$d['pinyin'] = $PingYing->getAllPY($l['sname']);
+			$d['pinyin'] = pinyin::utf8_to($l['sname']);
 			$d['logo_orignurl'] = $l['icon'];
 			$d['summary'] = $l['icon'];
 			$d['AppSource'] = $l['download_url'];
@@ -94,7 +93,7 @@
 		foreach ($AppList as $l) {
 			$d = array();
 			$d['name'] = $l['sname'];
-			$d['pinyin'] = $PingYing->getAllPY($l['sname']);
+			$d['pinyin'] = pinyin::utf8_to($l['sname']);
 			$d['logo_orignurl'] = $l['icon'];
 			$d['summary'] = $l['icon'];
 			$d['AppSource'] = $l['download_url'];
@@ -112,7 +111,7 @@
 		foreach ($AppList as $l) {
 			$d = array();
 			$d['name'] = $l['sname'];
-			$d['pinyin'] = $PingYing->getAllPY($l['sname']);
+			$d['pinyin'] = pinyin::utf8_to($l['sname']);
 			$d['logo_orignurl'] = $l['icon'];
 			$d['summary'] = $l['icon'];
 			$d['AppSource'] = $l['download_url'];

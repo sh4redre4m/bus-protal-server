@@ -18,7 +18,6 @@ class ios_controller{
 		$return['recommend'] = array_slice($recommend,0,8);
 		$return['app'] = array_slice($app,0,8);
 		$return['game'] = array_slice($game,0,8);
-
 		$json = json_encode($return);
 		echo $call.'(\''.$json.'\');';
 	}
